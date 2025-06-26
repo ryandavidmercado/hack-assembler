@@ -2,10 +2,11 @@ package assembler
 
 import (
 	"fmt"
-	"github.com/ryandavidmercado/hack-assembler/code"
-	"github.com/ryandavidmercado/hack-assembler/parser"
 	"strconv"
 	"strings"
+
+	"github.com/ryandavidmercado/hack-assembler/code"
+	"github.com/ryandavidmercado/hack-assembler/parser"
 )
 
 func Assemble(asmIn string) (string, error) {
@@ -16,7 +17,7 @@ func Assemble(asmIn string) (string, error) {
 	pass1Line := 0
 	// pass 1: gather label symbols
 	for ins := parser.Advance(asmPass1); ins != parser.NIL; ins = parser.Advance(asmPass1) {
-		line := strings.TrimSpace(asmPass1.Text())
+		line := strings.TrimSpace(strings.Split(asmPass1.Text(), "//")[0])
 
 		switch ins {
 		case parser.C_INSTRUCTION, parser.A_INSTRUCTION:
@@ -34,7 +35,7 @@ func Assemble(asmIn string) (string, error) {
 	// pass 2: assemble
 	var pass2VarRegister = 16
 	for ins := parser.Advance(asmPass2); ins != parser.NIL; ins = parser.Advance(asmPass2) {
-		line := strings.TrimSpace(asmPass2.Text())
+		line := strings.TrimSpace(strings.Split(asmPass2.Text(), "//")[0])
 
 		switch ins {
 		case parser.C_INSTRUCTION:

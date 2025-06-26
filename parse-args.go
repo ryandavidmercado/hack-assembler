@@ -15,8 +15,6 @@ type args struct {
 }
 
 func parseArgs() *args {
-	log.SetPrefix("parseArgs(): ")
-
 	inPtr := flag.String("in", "", "input file")
 	var out string
 	flag.StringVar(&out, "out", "", "output file")
