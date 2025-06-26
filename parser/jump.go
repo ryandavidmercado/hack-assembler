@@ -2,7 +2,6 @@ package parser
 
 import (
 	"fmt"
-	"log"
 	"strings"
 )
 
@@ -29,20 +28,18 @@ var jumpCodeMap = map[string]JumpCode{
 	"JMP": J_JMP,
 }
 
-func Jump(input string) JumpCode {
-	log.SetPrefix("parser/Jump():")
-
+func Jump(input string) (JumpCode, error) {
 	semiIndex := strings.Index(input, ";")
 	if semiIndex == -1 {
-		return J_NULL
+		return J_NULL, nil
 	}
 
 	jumpChars := input[semiIndex+1:]
 
 	code, ok := jumpCodeMap[jumpChars]
 	if !ok {
-		log.Fatal(fmt.Errorf("Failed to parse '%s': invalid jump '%s'", input, jumpChars))
+		return J_NULL, fmt.Errorf("Failed to parse '%s': invalid jump '%s'", input, jumpChars)
 	}
 
-	return code
+	return code, nil
 }

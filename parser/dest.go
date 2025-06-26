@@ -2,7 +2,6 @@ package parser
 
 import (
 	"fmt"
-	"log"
 	"strings"
 )
 
@@ -31,20 +30,18 @@ var destCodeMap = map[string]DestCode{
 	"ADM": D_ADM,
 }
 
-func Dest(input string) DestCode {
-	log.SetPrefix("parser/Dest():")
-
+func Dest(input string) (DestCode, error) {
 	eqIndex := strings.Index(input, "=")
 	if eqIndex == -1 {
-		return D_NULL
+		return D_NULL, nil
 	}
 
 	destChars := input[0:eqIndex]
 
 	code, ok := destCodeMap[destChars]
 	if !ok {
-		log.Fatal(fmt.Errorf("Failed to parse '%s': invalid dest '%s'", input, destChars))
+		return D_M, fmt.Errorf("Failed to parse '%s': invalid dest '%s'", input, destChars)
 	}
 
-	return code
+	return code, nil
 }

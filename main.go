@@ -14,7 +14,10 @@ func main() {
 		log.Fatal(err)
 	}
 
-	hack := assembler.Assemble(string(asm))
+	hack, err := assembler.Assemble(string(asm))
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	writeErr := os.WriteFile(args.out, []byte(hack), 0644)
 	if writeErr != nil {

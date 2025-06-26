@@ -2,7 +2,6 @@ package parser
 
 import (
 	"fmt"
-	"log"
 	"strings"
 )
 
@@ -70,9 +69,7 @@ var compCodeMap = map[string]CompCode{
 	"D|M": C_D_OR_M,
 }
 
-func Comp(input string) CompCode {
-	log.SetPrefix("parser/Dest():")
-
+func Comp(input string) (CompCode, error) {
 	compChars := input
 
 	eqIndex := strings.Index(compChars, "=")
@@ -87,8 +84,8 @@ func Comp(input string) CompCode {
 
 	code, ok := compCodeMap[compChars]
 	if !ok {
-		log.Fatal(fmt.Errorf("Failed to parse '%s': invalid comp '%s'", input, compChars))
+		return C_0, fmt.Errorf("Failed to parse %s: invalid comp '%s'", input, compChars)
 	}
 
-	return code
+	return code, nil
 }

@@ -4,12 +4,11 @@ import (
 	"fmt"
 	"github.com/ryandavidmercado/hack-assembler/code"
 	"github.com/ryandavidmercado/hack-assembler/parser"
-	"log"
 	"strconv"
 	"strings"
 )
 
-func Assemble(asmIn string) string {
+func Assemble(asmIn string) (string, error) {
 	asmPass1 := parser.Parser(asmIn)
 	asmPass2 := parser.Parser(asmIn)
 	hack := ""
@@ -23,7 +22,11 @@ func Assemble(asmIn string) string {
 		case parser.C_INSTRUCTION, parser.A_INSTRUCTION:
 			pass1Line++
 		case parser.L_INSTRUCTION:
-			symbol := parser.Symbol(line)
+			symbol, err := parser.Symbol(line)
+			if err != nil {
+				return "", err
+			}
+
 			symbolMap[symbol] = strconv.Itoa(pass1Line)
 		}
 	}
@@ -36,14 +39,33 @@ func Assemble(asmIn string) string {
 		switch ins {
 		case parser.C_INSTRUCTION:
 			{
-				destCode, compCode, jumpCode := parser.Dest(line), parser.Comp(line), parser.Jump(line)
+				destCode, err := parser.Dest(line)
+				if err != nil {
+					return "", err
+				}
+
+				compCode, err := parser.Comp(line)
+				if err != nil {
+					return "", err
+				}
+
+				jumpCode, err := parser.Jump(line)
+
+				if err != nil {
+					return "", err
+				}
+
 				dest, comp, jump := code.Dest(destCode), code.Comp(compCode), code.Jump(jumpCode)
 
 				hack += "111" + comp + dest + jump + "\n"
 			}
 		case parser.A_INSTRUCTION:
 			{
-				symbol := parser.Symbol(line)
+				symbol, err := parser.Symbol(line)
+				if err != nil {
+					return "", err
+				}
+
 				decimal, err := strconv.ParseInt(symbol, 10, 16)
 
 				if err != nil {
@@ -51,8 +73,7 @@ func Assemble(asmIn string) string {
 					if inMap {
 						res, err := strconv.ParseInt(value, 10, 16)
 						if err != nil {
-							log.SetPrefix("assember/Assemble():")
-							log.Fatalf("bad value in symbolMap[symbol]: %s", value)
+							return "", err
 						}
 
 						decimal = res
@@ -69,5 +90,5 @@ func Assemble(asmIn string) string {
 		}
 	}
 
-	return hack
+	return hack, nil
 }
