@@ -79,6 +79,10 @@ func Assemble(asmIn string) (string, error) {
 
 						decimal = res
 					} else {
+						if pass2VarRegister > 255 {
+							return "", fmt.Errorf(`Can't assign index to symbol "%s": max assignments (255) reached`, symbol)
+						}
+
 						symbolMap[symbol] = strconv.Itoa(pass2VarRegister)
 						decimal = int64(pass2VarRegister)
 						pass2VarRegister++
